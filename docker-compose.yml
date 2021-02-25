@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  postgres-compose:
+    image: postgres
+    container_name: project-postgre
+    environment:
+      POSTGRES_PASSWORD: "12345678"
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./sql:/var/lib/postgresql/data
+    networks:
+      - project-network
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    container_name: project-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "teste@teste.com"
+      PGADMIN_DEFAULT_PASSWORD: "12345678"
+    ports:
+      - "16543:20"
+    depends_on:
+      - postgres-compose
+    networks:
+      - project-network
+
+  server:
+    build:
+      context: ./
+      dockerfile: docker/dockerfile
+    image: php-8-composer/server
+    container_name: project-server
+    ports:
+      - "8080:8080"
+    networks:
+      - project-network
+    volumes:
+      - ".:/var/www/html/"
+    command: php -S 0.0.0.0:8080 -t public/
+    depends_on:
+      - pgadmin-compose
+
+networks:
+  project-network:
+    driver: bridge

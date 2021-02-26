@@ -20,7 +20,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: "teste@teste.com"
       PGADMIN_DEFAULT_PASSWORD: "12345678"
     ports:
-      - "16543:20"
+      - "16543:2020"
     depends_on:
       - postgres-compose
     networks:
